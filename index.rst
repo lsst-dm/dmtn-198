@@ -25,8 +25,8 @@ For example, the UKDF may obtain its data from the FrDF rather than from the USD
 The UKDF will not receive all raw images but instead will only receive images from a certain pre-designated portion of the sky.
 Appropriate metadata labels for the raw image files, as well as policies using those labels, will be configured into Rucio to enable this restrictive data transfer.
 
-Rucio will not be used to remove data when it is no longer needed.
-This function will be handled by workflow execution or campaign management mechanisms.
+Deciding that intermediate data products are no longer needed will be handled by workflow execution or campaign management mechanisms.
+Rucio will be used to execute this removal across all replicas.
 
 Download of files to end users will be provided by Virtual Observatory and/or other services within the Rubin Science Platform; it is not expected to be handled by Rucio.
 
