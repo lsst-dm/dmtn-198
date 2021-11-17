@@ -4,8 +4,6 @@
 
 .. sectnum::
 
-.. TODO: Delete the note below before merging new content to the master branch.
-
 Introduction
 ============
 
@@ -47,6 +45,8 @@ Data Access Centers that provide Butler access will also have their own Registry
 
 As a file or batch of files is transferred by Rucio, it will need to trigger an ingestion into the local Butler.
 The exact mechanism for triggering this is TBD.
+Each file requires appropriate metadata, akin to that produced by the ``astro_metadata_translator`` package for raw images.
+This includes identifying values for the appropriate dimensions for the dataset type.
 The metadata for this ingestion will be obtained from the files themselves, if they are self-describing, or else transferred along with the files in separate JSON or YAML documents, either one per file or one per batch.
 The exact mechanism for generating this "sidecar" metadata is TBD.
 
@@ -64,6 +64,10 @@ Most files are expected to be stored in an object store at each location.
 Some locations may choose to use a filesystem instead.
 
 The Large File Annex is currently thought of as containing two types of files: one type that is ingested into a Butler and used as a dataset and another type that remains as a read-only object only.
+The files to be ingested are identified by looking for a known, pre-specified set of CSC/generator/MIME type values in largeFileObjectAvailable event messages.
+The contents of the Large File Annex object store on the Summit are replicated by the DBB to the USDF; the LFA files to be ingested are then placed in the same Butler as images and data products.
+The DBB should be able to be configured to replicate ingested LFA files (and ingest into a destination Butler) just like any other ingested dataset.
+It should also be able to be configured to replicate non-ingested LFA files if need be (without ingestion at the destination, of course), maintaining the object name (with a different bucket/root).
 
 
 Databases
