@@ -162,8 +162,6 @@ This configuration also permits us to set up local monitoring of message traffic
 Butler ingest clients should use durable topic subscriptions instead of queues or non-durable topic subscriptions. Using a durable topic subscription effectively allows the messages to be read as a queue.
 If the Butler ingest service went down, the message broker would still retain messages for the service until it reconnected.
 We could use non-durable topic subscriptions to the same topic and for monitoring clients.
-We will write a plug-in message filter using Apache Camel.
-We will use this plug-in in conjunction with routing mechanisms to forward messages to the appropriate site.
 
 Federated Message Broker Diagram
 --------------------------------
@@ -179,11 +177,6 @@ The diagram also shows the federation of message brokers, one at each satellite 
 All file state changes in a local RSE are transmitted from that site using the Rucio utilities (or APIs) to communicate to Rucio at the USDF.
 This activity happens in all cases.
 For example, when a file changes state in RSE at UKDF, it must register directly to the USDF; it doesn't proxy through the FrDF, even though the UKDF will be transferring files to the FrDF, not the USDF directly.
-
-The Rucio system uses a daemon, Hermes, to send notification messages about changes in file status.
-The Hermes daemon periodically queries a database, retrieves recent entries, formats them as STOMP messages, and sends them to the message broker at the USDF.
-The broker at the USDF then forwards the messages to the appropriate broker at the satellite sites.
-Messages are filtered so only the messages that are meant for a destination and indicate that a file is meant for Butler ingest are forwarded.
 
 Each satellite site has a Butler ingest daemon that reads messages from the local broker and ingests files into the Butler at that site.
 The Butler ingest daemon should batch incoming messages so ingests can be grouped.
