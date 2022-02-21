@@ -125,7 +125,7 @@ information and route messages to message brokers at RSE sites as appropriate. T
 Java plug-in to ActiveMQ.
 
 We will filter message keys ``event_type:transfer-done`` (indicating the file transfer has completed) and ``payload:scope:<scope of the transferred data>``, and then send to the 
-broker at an RSE site based on the contents of "payload:dst-rse:<destination RSE>."  We might be able to use other event_types to for sets of files, but this is still TBD.
+broker at an RSE site based on the contents of ``payload:dst-rse:<destination RSE>``.  We might be able to use other ``event_types`` for sets of files, but this is still TBD.
 
 Issues
 ------
