@@ -76,7 +76,7 @@ The broker software must be maintained throughout operations, so community suppo
 expect support (new updates, bug fixes, security patches) to continue for the foreseeable future. In addition, we can write clients for each of these brokers in a variety of 
 languages. There are also a variety of plug-ins we could leverage in the future.
 
-Plug-ins for ActiveMQ and Kafka are written in Java. RabbitMQ plug-ins are written in Erlang.  ActiveMQ and Kafka it support Apache Camel (see below), which supports message 
+Plug-ins for ActiveMQ and Kafka are written in Java. RabbitMQ plug-ins are written in Erlang.  ActiveMQ and Kafka are supported by Apache Camel (see below), which implements message 
 filtering and routing as part of its distribution.
 
 The broker we're using to prototype our solution is ActiveMQ.  This may be changed to use Kafka in the future.
