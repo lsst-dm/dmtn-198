@@ -52,7 +52,8 @@ After any action in Rucio is completed, it is logged in a Rucio database at the 
 
 DBB requires that some files be automatically ingested into Butler repositories at the RSE sites after completing a Rucio transfer. We can trigger this ingestion by receiving 
 Rucio messages from Hermes, examining the message's contents, and sending a message to a service running at the DF which will ingest the file into a Butler repository at that site.
-The metadata for this ingestion will be obtained from the files themselves, if they are self-describing, or else transferred along with the files in separate JSON or 
+The metadata for this ingestion includes the universal unique identifier (UUID), values for data identifier dimension components, the name of the run collection that "owns" the dataset, and eventually provenance information detailing how the dataset was created.
+This metadata will be obtained from the files themselves, if they are self-describing, such as raw image files, or else from separate JSON or 
 YAML documents (or in the message to the broker itself), with one per file or one per batch.  The exact mechanism for generating this "sidecar" metadata is TBD.
 
 
