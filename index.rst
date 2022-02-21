@@ -95,8 +95,8 @@ A message sent to a queue remains in that queue until it is consumed and its con
 can be consumed and processed by a client or group of clients working together. There is only one message, so the first client to retrieve the message 
 obtains it, and no other clients will receive it.
 
-Topics and Durable vs Non-durable Topic subscriptions
------------------------------------------------------
+Topics and Durable vs. Non-durable Topic subscriptions
+------------------------------------------------------
 
 A message sent to a topic is broadcast to multiple clients subscribed to that topic. Each client gets its own copy of the message.  
 
