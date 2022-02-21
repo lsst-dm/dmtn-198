@@ -92,7 +92,7 @@ Message Queues
 -------------
 
 A message sent to a queue remains in that queue until it is consumed and its consumption is acknowledged. Generally, this is used to ensure that messages 
-can be consumed and processed by a client or group of clients working together. There is only one message, so the first client retrieves the message 
+can be consumed and processed by a client or group of clients working together. There is only one message, so the first client to retrieve the message 
 obtains it, and no other clients will receive it.
 
 Topics and Durable vs Non-durable Topic subscriptions
