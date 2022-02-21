@@ -135,8 +135,8 @@ message brokers. This approach relies on the message brokers themselves synchron
 ActiveMQ has several strategies to connect brokers over a WAN and how best to pass traffic between brokers. The topology of the brokers, the queues,
 and the plug-ins defined for each site needs to be explored.  
 
-We need to keep in mind that network bandwidth requirements between sites and the extra traffic that brokers add to running message brokers. Therefore, 
-message TTL should either be set high enough to not expire before a client or not set at all.
+We need to keep in mind the available network bandwidth between sites and the extra traffic that brokers add. Therefore, 
+message TTL should either be set high enough to not expire before a client can process the message or not set at all.
 
 We should also note the maintenance of custom broker plug-ins.  ActiveMQ and Kafka plug-ins are written in Java and RabbitMQ plug-ins are written in 
 Erlang. It would probably be a lot easier to find a Java programmer than an Erlang programmer if software features were needed to be added or bug fixes implemented.
