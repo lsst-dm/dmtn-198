@@ -123,7 +123,7 @@ Since we can not directly filter data kept in the body of messages, we will use 
 information and route messages to message brokers at RSE sites as appropriate. This will be specified as a combination of XML in the ActiveMQ configuration file and a custom 
 Java plug-in to ActiveMQ.
 
-We will filter message keys "event_type:transfer-done" (indicating the file transfer has completed) and "payload:scope:<scope of the transferred data>," and then send to the 
+We will filter message keys ``event_type:transfer-done`` (indicating the file transfer has completed) and ``payload:scope:<scope of the transferred data>``, and then send to the 
 broker at an RSE site based on the contents of "payload:dst-rse:<destination RSE>."  We might be able to use other event_types to for sets of files, but this is still TBD.
 
 Issues
