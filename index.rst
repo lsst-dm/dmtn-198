@@ -41,7 +41,7 @@ Location and Metadata
 Overview
 --------
 
-The USDF will serve as the Rucio site. Rucio will maintain maintain the global state of 
+The USDF will serve as the Rucio site. Rucio will maintain the global state of 
 replication of files/objects across sites in a single centeral database at the USDF. Rucio services 
 will be used to transfer files to Rucio Storage Elements (RSE) at each data site.  Rules set in Rucio determine how files are transferred between RSEs. Rucio information is kept in a single central database at the USDF.
 
