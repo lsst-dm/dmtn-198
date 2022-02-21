@@ -50,7 +50,7 @@ There are RSEs at the USDF, Chile, United Kingdom Data Facility (UKDF), and Fren
 
 After any action in Rucio is completed, it is logged in a Rucio database at the USDF.  Rucio has a daemon, Hermes, which periodically takes new database entries, changes each one to a STOMP message and sends them to a message broker.
 
-DBB requires that some files be automatically ingested into Butler repositories at the RSE sites after completing a Rucio transfer. We can get this information by receiving 
+DBB requires that some files be automatically ingested into Butler repositories at the RSE sites after completing a Rucio transfer. We can trigger this ingestion by receiving 
 Rucio messages from Hermes, examining the message's contents, and sending a message to a service running at the DF which will ingest the file into a Butler repository at that site.
 The metadata for this ingestion will be obtained from the files themselves, if they are self-describing, or else transferred along with the files in separate JSON or 
 YAML documents (or in the message to the broker itself), with one per file or one per batch.  The exact mechanism for generating this "sidecar" metadata is TBD.
