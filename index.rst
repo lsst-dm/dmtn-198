@@ -43,7 +43,7 @@ Overview
 
 The USDF will serve as the Rucio site. Rucio will maintain the global state of 
 replication of files/objects across sites in a single central database there. Rucio services 
-will be used to transfer files to Rucio Storage Elements (RSE) at each data site.  Rules set in Rucio determine how files are transferred between RSEs. Rucio information is kept in a single central database at the USDF.
+will be used to transfer files to Rucio Storage Elements (RSE) at each site.  Note that sites with RSEs will include the Data Facilities for Data Release Production but will also include the Chilean Data Access Center and may also include Independent Data Access Centers (IDACs) that require copies of data products.  Rules set in Rucio determine how files are transferred between RSEs.
 
 Each site has storage (file systems, object stores, tape, etc.) registered with Rucio as one or more RSEs, and each site will have its own local Butler registry.  This registry will maintain a view of all local datasets.
 There are RSEs at the USDF, Chile, United Kingdom Data Facility (UKDF), and French Data Facility (FrDF). No Rucio services are running at the remote sites. All Rucio commands must call back to the USDF to perform actions.
