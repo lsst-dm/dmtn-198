@@ -85,7 +85,7 @@ The broker we're using to prototype our solution is ActiveMQ.  This may be chang
 Rucio Hermes Daemon Configuration
 ---------------------------------
 
-The Hermes daemon can use "queues" or "topics" based on a parameter in the rucio.cfg file.  STOMP messages prefixed are prefixed with "/queue" or with "/topic." 
+The Hermes daemon can use "queues" or "topics" based on a parameter in the rucio.cfg file.  STOMP messages are prefixed with ``/queue`` or with ``/topic``. 
 ActiveMQ strips this prefix and (if necessary) creates either a message queue or a message topic and sends the message to that destination.
 
 Message Queues
