@@ -164,7 +164,7 @@ Federated Message Broker Diagram
 This diagram shows the file transfer paths and messaging paths for DBB services. The diagram also shows the federation of message brokers, one at each 
 satellite DF connected to the primary message broker at the USDF.  
 
-All file state changes in a local RSE are transmitted from that site using the Rucio utilities (or APIs) to communicate to RUCIO at the USDF. This
+All file state changes in a local RSE are transmitted from that site using the Rucio utilities (or APIs) to communicate to Rucio at the USDF. This
 activity happens in all cases. For example, when a file changes state in RSE at UKDF, it must register directly to the USDF; it doesn't proxy through the 
 FrDF, even though the UKDF will be transferring files to the FrDF, not the USDF directly.
 
