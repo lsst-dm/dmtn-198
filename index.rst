@@ -42,7 +42,7 @@ Overview
 --------
 
 The USDF will serve as the Rucio site.
-Rucio will maintain the global state of replication of files/objects across sites in a single central database there.
+Rucio will maintain the global state of replication of files/objects across sites in a single central database.
 Rucio services will be used to transfer files to Rucio Storage Elements (RSE) at each site.
 Note that sites with RSEs will include the Data Facilities for Data Release Production but will also include the Chilean Data Access Center and may also include Independent Data Access Centers (IDACs) that require copies of data products.
 Rules set in Rucio determine how files are transferred between RSEs.
@@ -54,114 +54,61 @@ No Rucio services are running at the remote sites.
 All Rucio commands must call back to the USDF to perform actions.
 
 After any action in Rucio is completed, it is logged in a Rucio database at the USDF.
-Rucio has a daemon, Hermes, which periodically takes new database entries, changes each one to a STOMP message and sends them to a message broker.
+Rucio has a daemon, Hermes, which periodically takes new database entries, changes each one to a message, and sends the message to a message broker.
+Monitoring services generally use this message stream.
 
 DBB requires that some files be automatically ingested into Butler repositories at the RSE sites after completing a Rucio transfer.
-We can trigger this ingestion by receiving Rucio messages from Hermes, examining the message's contents, and sending a message to a service running at the DF which will ingest the file into a Butler repository at that site.
-The metadata for this ingestion includes the universal unique identifier (UUID), values for data identifier dimension components, the name of the run collection that "owns" the dataset, and eventually provenance information detailing how the dataset was created.
-This metadata will be obtained from the files themselves, if they are self-describing, such as raw image files, or else from separate JSON or YAML documents (or in the message to the broker itself), with one per file or one per batch.  The exact mechanism for generating this "sidecar" metadata is TBD.
-
+We can trigger this ingestion by receiving Rucio messages, examining the message's contents, and sending a message to a service running at the DF, which will ingest the file into a Butler repository at that site.
+The metadata for this ingestion includes the universal unique identifier (UUID), values for data identifier dimension components, the name of the run collection that "owns" the dataset, and, eventually, provenance information detailing how the dataset was created.
+This metadata will be obtained from the files themselves, if they are self-describing, such as raw image files, or else from separate JSON or YAML documents (or in the message to the broker itself), with one per file or one per batch. The exact mechanism for generating this "sidecar" metadata is TBD.
 
 Note that Registries do not communicate directly with each other.
 In particular, there is no database-to-database replication associated with Butler Registries.
 
-Also note that there are files that are part of the permanent survey record that are not Butler datasets.
+Also, note that there are files that are part of the permanent survey record that are not Butler datasets.
 These files are also transferred via Rucio according to policy, primarily to the FrDF.
-
-Message Brokers
----------------
-
-The message brokers under consideration are ActiveMQ, RabbitMQ, and Kafka.
-
-Rucio uses ActiveMQ as its default message broker, in examples and in the default demonstration containers it distributes.
-ActiveMQ has two main versions, "Classic" and "Artemis".
-Members of the collaboration have used RabbitMQ with Rucio as well.
-Kafka has been mentioned as a possible broker. ActiveMQ supports the STOMP protocol Hermes uses directly.
-Both RabbitMQ and Kafka support the STOMP protocol via a plug-in.
-
-The broker software must be maintained throughout operations, so community support of the broker is essential.
-ActiveMQ, RabbitMQ, and Kafka all have active user bases, and we expect support (new updates, bug fixes, security patches) to continue for the foreseeable future.
-In addition, we can write clients for each of these brokers in a variety of languages.
-There are also a variety of plug-ins we could leverage in the future.
-
-Plug-ins for ActiveMQ and Kafka are written in Java. RabbitMQ plug-ins are written in Erlang.
-ActiveMQ and Kafka are supported by Apache Camel (see below), which implements message filtering and routing as part of its distribution.
-
-The broker we're using to prototype our solution is ActiveMQ.
-This may be changed to use Kafka in the future.
-
-
-Rucio Hermes Daemon Configuration
----------------------------------
-
-The Hermes daemon can use "queues" or "topics" based on a parameter in the rucio.cfg file.
-STOMP messages are prefixed with ``/queue`` or with ``/topic``.
-ActiveMQ strips this prefix and (if necessary) creates either a message queue or a message topic and sends the message to that destination.
-
-Message Queues
--------------
-
-A message sent to a queue remains in that queue until it is consumed and its consumption is acknowledged.
-Generally, this is used to ensure that messages can be consumed and processed by a client or group of clients working together.
-There is only one message, so the first client to retrieve the message obtains it, and no other clients will receive it.
-
-Topics and Durable vs. Non-durable Topic subscriptions
-------------------------------------------------------
-
-A message sent to a topic is broadcast to multiple clients subscribed to that topic.
-Each client gets its own copy of the message.
-
-How the broker treats that message depends on whether or not the topic subscriber is "durable" or "non-durable".
-
-In a durable topic subscription, if a message is sent and the client is down, the broker remembers that the subscription was durable and retains any unread messages until the client resubscribes.
-This type of subscription is helpful if the client comes and goes.
-
-In a non-durable topic subscription, if a message is sent and a client is down, it will not have the opportunity to receive the message, and that message is lost.
-This type of subscription is useful if receiving all messages isn't necessary, such as a client used for intermittent debugging.
-
-Note that topics aren't durable or non-durable; the topic subscriptions can either be durable or non-durable.
-
-Message Filtering
------------------
-
-Message filtering allows a message broker or client to obtain a subset of messages from the main message flow.
-We will use this to identify messages that would trigger a butler ingest at a particular RSE site and only transmit those messages to that site.
-
-Both versions of ActiveMQ (Classic and Artemis) support both server-side and client-side message filtering using a simple SELECT-like syntax for data in a message header.
-ActiveMQ Artemis can filter messages in the body of the message, but the body of the message must be in XML.
-Hermes transmits this information in JSON in the body of the message.
-
-Since we can not directly filter data kept in the body of messages, we will use Apache Camel in a broker plug-in.
-Apache Camel will allow us to examine message body information and route messages to message brokers at RSE sites as appropriate.
-This will be specified as a combination of XML in the ActiveMQ configuration file and a custom Java plug-in to ActiveMQ.
-
-We will filter message keys ``event_type:transfer-done`` (indicating the file transfer has completed) and ``payload:scope:<scope of the transferred data>``, and then send to the broker at an RSE site based on the contents of ``payload:dst-rse:<destination RSE>``.
-We might be able to use other ``event_types`` for sets of files, but this is still TBD.
 
 Issues
 ------
 
-Each RSE site should have a message broker associated with it, so messages sent from Hermes to the USDF broker can forward those messages to satellite DF message brokers.
-This approach relies on the message brokers themselves synchronizing the messages properly, allowing access to the message broker queue locally.
-ActiveMQ has several strategies to connect brokers over a WAN and how best to pass traffic between brokers. The topology of the brokers, the queues, and the plug-ins defined for each site needs to be explored.
+The Hermes service reads messages from the Rucio event database, converts them to messages, and sends those messages to an ActiveMQ message broker.
+Once consumed by a client, these messages are no longer available.
+Generally, a monitoring service reads these messages for reports on the status of Rucio and, therefore, the messages can not be used by any other client.
+We wish to use these messages to trigger Butler ingestion once files arrive at an RSE.
+However, since the monitoring service already consumes these messages, we need a new method to obtain that information to perform Butler Ingestion.
 
-We need to keep in mind the available network bandwidth between sites and the extra traffic that brokers add.
-Therefore, message TTL should either be set high enough to not expire before a client can process the message or not set at all.
+Additionally, the Rucio ActiveMQ broker is local to the Rucio site, in this case, the USDF.
+The Butler Ingest Service (BIS) runs at each RSE site, located at the UKDF and FrDF.
+Therefore, we need a reliable method that allows the BIS at each location to read messages originating from the USDF without undue burden on the BIS.
+We don't want the BIS to have to keep track of problems that occur due to network failure to the USDF.
 
-We should also note the maintenance of custom broker plug-ins.
-ActiveMQ and Kafka plug-ins are written in Java and RabbitMQ plug-ins are written in Erlang.
-It would probably be a lot easier to find a Java programmer than an Erlang programmer if software features were needed to be added or bug fixes implemented.
+Further, we wish to only transmit message traffic to the BIS specific to that RSE site.
+The BIS at each site shouldn’t receive messages about files upon which it can not act.
+
+Finally, there are times when Butler ingestion requires additional information for a specific file.
+We wish to minimize the number of calls back to the Rucio site to obtain this information since making calls to Rucio from an RSE site is expensive.
+
 
 Approach
 --------
 
-The topology of the broker network should be hub/spoke, meaning that we should configure all RSE site message brokers to connect directly to the message broker at the USDF.
-In this way, the brokers handle the message transaction traffic, and so consumption of messages is dealt with locally, rather than having client programs connect to the USDF's message broker.
-This configuration also permits us to set up local monitoring of message traffic.
+The approach we will take solves all of these issues.
 
-Butler ingest clients should use durable topic subscriptions instead of queues or non-durable topic subscriptions. Using a durable topic subscription effectively allows the messages to be read as a queue.
-If the Butler ingest service went down, the message broker would still retain messages for the service until it reconnected.
-We could use non-durable topic subscriptions to the same topic and for monitoring clients.
+First, the Hermes daemon will be modified to transmit two messages instead of one.
+Hermes will send one message to the ActiveMQ broker, which monitoring services can use.
+Hermes will send the second message sent to a Kafka Message broker.
+The BIS will read messages sent to the Kafka Broker at each RSE site.
+
+Second, we will install a Kafka Broker at each RSE site, replicating messages from the Kafka Broker at the USDF.
+The Mirror-Maker2 service handles replication. This service ensures messages are correctly copied, greatly simplifying the BIS service.
+
+Third, we will include modifications to the Hermes service to publish messages to RSE-specific Kafka topics.
+We will use the contents of the database entry to see the RSE destination of landed files and write to a Kafka topic specifically for that RSE.
+We will configure the Mirror-Maker2 service at each RSE site only to replicate Kafka topics for that site's RSEs.
+Every message transmitted to the Kafka Broker at the RSE site will be actionable by the BIS.
+
+Finally, as we construct messages, we will perform requests to Rucio locally to obtain any additional information we require for ingestion.
+Then, we will add that information into the messages we create for the ingestion services at the remote site, eliminating the need to make calls from the RSE site back to the Rucio site.
 
 Federated Message Broker Diagram
 --------------------------------
