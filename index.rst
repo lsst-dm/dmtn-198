@@ -59,7 +59,7 @@ Monitoring services generally use this message stream.
 
 DBB requires that some files be automatically ingested into Butler repositories at the RSE sites after completing a Rucio transfer.
 We can trigger this ingestion by receiving Rucio messages, examining the message's contents, and sending a message to a service running at the DF, which will ingest the file into a Butler repository at that site.
-The metadata for this ingestion includes the universal unique identifier (UUID), values for data identifier dimension components, the name of the run collection that "owns" the dataset, and eventually, provenance information detailing how the dataset was created.
+The metadata for this ingestion includes the universal unique identifier (UUID), values for data identifier dimension components, the name of the run collection that "owns" the dataset, and, eventually, provenance information detailing how the dataset was created.
 This metadata will be obtained from the files themselves, if they are self-describing, such as raw image files, or else from separate JSON or YAML documents (or in the message to the broker itself), with one per file or one per batch. The exact mechanism for generating this "sidecar" metadata is TBD.
 
 Note that Registries do not communicate directly with each other.
@@ -73,7 +73,7 @@ Issues
 
 The Hermes service reads messages from the Rucio event database, converts them to messages, and sends those messages to an ActiveMQ message broker.
 Once consumed by a client, these messages are no longer available.
-Generally, a monitoring service reads these messages for reports on the status of Rucio and, therefore, can not be used by any other client.
+Generally, a monitoring service reads these messages for reports on the status of Rucio and, therefore, the messages can not be used by any other client.
 We wish to use these messages to trigger Butler ingestion once files arrive at an RSE.
 However, since the monitoring service already consumes these messages, we need a new method to obtain that information to perform Butler Ingestion.
 
@@ -96,7 +96,7 @@ The approach we will take solves all of these issues.
 
 First, the Hermes daemon will be modified to transmit two messages instead of one.
 Hermes will send one message to the ActiveMQ broker, which monitoring services can use.
-Hermes will send the second message is sent to a Kafka Message broker.
+Hermes will send the second message sent to a Kafka Message broker.
 The BIS will read messages sent to the Kafka Broker at each RSE site.
 
 Second, we will install a Kafka Broker at each RSE site, replicating messages from the Kafka Broker at the USDF.
