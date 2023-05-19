@@ -9,12 +9,31 @@
 Introduction
 ============
 
-This document describes the decisions made in the course of implementing the Data Backbone design from :dmtn:`122`.
+This document describes the decisions made in the course of implementing the Data Backbone design. 
+:dmtn:`122` provides an obsolete view of the starting point.
+
+The Data Backbone (DBB) concept is to provide data management (storage, tracking, and replication) for Rubin data products that reside in non-computational storage tiers. 
+It provides policy-defined operations for intra-site and inter-site data distribution, access latency requirements dependent upon the lifecycle of the data, data protection and recovery, data retention and eviction given cadences and predicted and observed on-demand usage, and efficient bulk recall of data which are spatially, temporally, or otherwise related in support of processing or export.
+
+This require services for:
+  - Replication and Transport
+  - Location and Metadata
+
+It must deal with :
+  - Files
+  - Databases
+
+all of these are dealt with below. 
+
+ 
 
 Replication and Transport
 =========================
 
 The Data Backbone (DBB) will be used to move file/object data for production purposes between Data Facilities, including the US Data Facility (USDF), French Data Facility (FrDF), and UK Data Facility (UKDF).
+The Data Backbone does not include public access restrictions, responsibilities regarding proprietary data periods or users with data access rights, or authorization or authentication of external users or services. This functionality is provided by layers on top of the Data Backbone, in the Rubin Science Platform (RSP), Identity Management, and Bulk Distribution components.
+
+
 It will also be used to move "offline", non-time-sensitive raw data from the Observatory in Chile to the USDF and potentially to the FrDF.
 Data products to be served directly from Data Access Centers in Chile or elsewhere (IDACs) will be moved via the DBB, as will data products sent to other partners, as described in :dmtn:`147`.
 
@@ -38,6 +57,7 @@ Similarly, in a hybrid cloud model where permanent storage is on-premises but a 
 Location and Metadata
 =====================
 
+The Data Backbone tracks the locations of all replicas of data ingested into it, along with their metadata and provenance. This information is stored in global, replicated database tables within the Consolidated Database instances.
 Overview
 --------
 
