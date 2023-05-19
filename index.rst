@@ -16,8 +16,10 @@ The Data Backbone (DBB) concept is to provide data management (storage, tracking
 It provides policy-defined operations for intra-site and inter-site data distribution, access latency requirements dependent upon the lifecycle of the data, data protection and recovery, data retention and eviction given cadences and predicted and observed on-demand usage, and efficient bulk recall of data which are spatially, temporally, or otherwise related in support of processing or export.
 
 This require services for:
-  - Replication and Transport
-  - Location and Metadata
+  - Replication and Transport, including the moving of data to archival storage
+  - Location and Metadata, including the ingestion of data replicas into local Butler repositories
+  
+A related service is needed for transporting and tracking embargoed data, but since that is security-sensitive, it does not use the mechanisms described here.
 
 It must deal with :
   - Files
@@ -34,7 +36,7 @@ The Data Backbone (DBB) will be used to move file/object data for production pur
 The Data Backbone does not include public access restrictions, responsibilities regarding proprietary data periods or users with data access rights, or authorization or authentication of external users or services. This functionality is provided by layers on top of the Data Backbone, in the Rubin Science Platform (RSP), Identity Management, and Bulk Distribution components.
 
 
-It will also be used to move "offline", non-time-sensitive raw data from the Observatory in Chile to the USDF and potentially to the FrDF.
+It will also be used to move curated combined calibration data from the USDF to the Observatory in Chile.
 Data products to be served directly from Data Access Centers in Chile or elsewhere (IDACs) will be moved via the DBB, as will data products sent to other partners, as described in :dmtn:`147`.
 
 These large-scale movements will be coordinated via Rucio,
@@ -57,7 +59,9 @@ Similarly, in a hybrid cloud model where permanent storage is on-premises but a 
 Location and Metadata
 =====================
 
-The Data Backbone tracks the locations of all replicas of data ingested into it, along with their metadata and provenance. This information is stored in global, replicated database tables within the Consolidated Database instances.
+The Data Backbone tracks the locations of all replicas of data ingested into it, and it ensures that their metadata and provenance is similarly replicated.
+The source of truth for metadata and provenance is the Butler repository.
+Important metadata items, particularly about images, are summarized in the Consolidated Database.
 Overview
 --------
 
